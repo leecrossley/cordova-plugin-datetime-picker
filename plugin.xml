@@ -2,23 +2,14 @@
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android" id="datetimepicker" version="0.1.0">
     <name>Date / Time Picker</name>
     <author>Lee Crossley (http://ilee.co.uk/), based on the plugin by Jaakko Santala</author>
-    <description>Cordova Social Message Plugin to utilise native share features. Share text, images and urls to Facebook, Twitter and more.</description>
-    <keywords>cordova, social, message, share, facebook, twitter, image, url</keywords>
+    <description>Cordova Date Time Picker Plugin to utilise the native Windows Phone 8 toolkit date and time selectors.</description>
+    <keywords>cordova, date, time, datetime, picker, wp8, wptoolkit</keywords>
     <engines>
         <engine name="cordova" version=">=3.0.0" />
     </engines>
     <js-module src="www/datetimepicker.js" name="DateTimePicker">
         <clobbers target="datetimepicker" />
     </js-module>
-    <platform name="ios">
-        <config-file target="config.xml" parent="/*">
-            <feature name="SocialMessage">
-                <param name="ios-package" value="SocialMessage" />
-            </feature>
-        </config-file>
-        <header-file src="src/ios/SocialMessage.h" />
-        <source-file src="src/ios/SocialMessage.m" />
-    </platform>
     <platform name="wp8">
         <config-file target="config.xml" parent="/*">
             <feature name="DateTimePicker">
