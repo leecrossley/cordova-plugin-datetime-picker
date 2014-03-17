@@ -8,7 +8,9 @@
 cordova plugin add https://github.com/leecrossley/cordova-plugin-datetime-picker.git
 ```
 
-Currently requires you to include the WPtoolkit (available via nuget), although I'm working to break this dependency.
+Currently requires you to include the Microsoft.Phone.Controls.Toolkit and Coding4Fun.Toolkit.Controls (both available via nuget), although I'm working to break this dependency.
+
+Coding4Fun.Toolkit.Controls is used for the timepicker, as the default WPToolkit implementation does not support intervals (steps), such as being able to only select 15 minute intervals.
 
 ## Usage
 

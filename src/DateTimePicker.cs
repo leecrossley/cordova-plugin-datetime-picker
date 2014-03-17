@@ -1,101 +1,46 @@
-﻿using System.Runtime.Serialization;
-using WPCordovaClassLib.Cordova;
-using WPCordovaClassLib.Cordova.Commands;
-using WPCordovaClassLib.Cordova.JSON;
-using Microsoft.Phone.Shell;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Phone.Controls;
-using System.Windows;
+﻿using System;
+using System.Runtime.Serialization;
 using Microsoft.Phone.Tasks;
 
 namespace WPCordovaClassLib.Cordova.Commands
 {
-    /// <summary>
-    /// Represents command that allows the user to choose a date (day/month/year) or time (hour/minute/am/pm).
-    /// </summary>
     public class DateTimePicker : BaseCommand
     {
+        private DateTimePickerTask _dateTimePickerTask;
+        private DateTimePickerOptions _dateTimePickerOptions;
 
-        #region DateTimePicker Options
-
-        /// <summary>
-        /// Represents DateTimePicker options
-        /// </summary>
         [DataContract]
         public class DateTimePickerOptions
         {
-            /// <summary>
-            /// Initial value for time or date
-            /// </summary>
             [DataMember(IsRequired = false, Name = "value")]
-            public DateTime Value { get; set; }   
-         
-                        /// <summary>
-            /// Creates options object with default parameters
-            /// </summary>
+            public DateTime Value { get; set; }
+
+            [DataMember(IsRequired = false, Name = "step")]
+            public int Step { get; set; }
+
             public DateTimePickerOptions()
             {
-                this.SetDefaultValues(new StreamingContext());
+                SetDefaultValues(new StreamingContext());
             }
 
-            /// <summary>
-            /// Initializes default values for class fields.
-            /// Implemented in separate method because default constructor is not invoked during deserialization.
-            /// </summary>
-            /// <param name="context"></param>
-            [OnDeserializing()]
+            [OnDeserializing]
             public void SetDefaultValues(StreamingContext context)
             {
-                this.Value = DateTime.Now;
+                Value = DateTime.Now;
+                Step = 60;
             }
-
         }
-        #endregion
 
-        /// <summary>
-        /// Used to open datetime picker
-        /// </summary>
-        private DateTimePickerTask dateTimePickerTask;
-
-        /// <summary>
-        /// DateTimePicker options
-        /// </summary>
-        private DateTimePickerOptions dateTimePickerOptions;
-
-        /// <summary>
-        /// Triggers  special UI to select a date (day/month/year)
-        /// </summary>
         public void selectDate(string options)
         {
+            try 
+            {
+                if (!GetDefaults(options)) return;
 
-            try {
-           
-                try
-                {
+                _dateTimePickerTask = new DateTimePickerTask { Value = _dateTimePickerOptions.Value };
 
-                    string value = WPCordovaClassLib.Cordova.JSON.JsonHelper.Deserialize<string[]>(options)[0];
-                    dateTimePickerOptions = new DateTimePickerOptions();
-                    if(!String.IsNullOrEmpty(value)) {
-                        dateTimePickerOptions.Value = FromUnixTime(long.Parse(value));
-                    }
-
-                    //this.dateTimePickerOptions = String.IsNullOrEmpty(options["value"]) ? new DateTimePickerOptions() : 
-                    //    WPCordovaClassLib.Cordova.JSON.JsonHelper.Deserialize<DateTimePickerOptions>(options);
-
-                }
-                catch (Exception ex)
-                {
-                    this.DispatchCommandResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, ex.Message));
-                    return;
-                }
-
-                this.dateTimePickerTask = new DateTimePickerTask();
-                dateTimePickerTask.Value = dateTimePickerOptions.Value;
-
-                dateTimePickerTask.Completed += this.dateTimePickerTask_Completed;
-                dateTimePickerTask.Show(DateTimePickerTask.DateTimePickerType.Date);
+                _dateTimePickerTask.Completed += dateTimePickerTask_Completed;
+                _dateTimePickerTask.Show(DateTimePickerTask.DateTimePickerType.Date);
             }
             catch (Exception e)
             {
@@ -103,37 +48,20 @@ namespace WPCordovaClassLib.Cordova.Commands
             }
         }
 
-        /// <summary>
-        /// Triggers  special UI to select a time (hour/minute/am/pm).
-        /// </summary>
         public void selectTime(string options)
         {
-
             try
             {
-                try
-                {
-                    string value = WPCordovaClassLib.Cordova.JSON.JsonHelper.Deserialize<string[]>(options)[0];
-                    dateTimePickerOptions = new DateTimePickerOptions();
-                    if (!String.IsNullOrEmpty(value)) {
-                        dateTimePickerOptions.Value = FromUnixTime(long.Parse(value));
-                    }
+                if (!GetDefaults(options)) return;
 
-                   // this.dateTimePickerOptions = String.IsNullOrEmpty(options) ? new DateTimePickerOptions() :
-                   //     WPCordovaClassLib.Cordova.JSON.JsonHelper.Deserialize<DateTimePickerOptions>(options);
+                _dateTimePickerTask = new DateTimePickerTask
+                    {
+                        Value = _dateTimePickerOptions.Value,
+                        Step = _dateTimePickerOptions.Step
+                    };
 
-                }
-                catch (Exception ex)
-                {
-                    this.DispatchCommandResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, ex.Message));
-                    return;
-                }
-
-                this.dateTimePickerTask = new DateTimePickerTask();
-                dateTimePickerTask.Value = dateTimePickerOptions.Value;
-
-                dateTimePickerTask.Completed += this.dateTimePickerTask_Completed;
-                dateTimePickerTask.Show(DateTimePickerTask.DateTimePickerType.Time);
+                _dateTimePickerTask.Completed += dateTimePickerTask_Completed;
+                _dateTimePickerTask.Show(DateTimePickerTask.DateTimePickerType.Time);
             }
             catch (Exception e)
             {
@@ -141,18 +69,38 @@ namespace WPCordovaClassLib.Cordova.Commands
             }
         }
 
-        private DateTime FromUnixTime(long unixtime) {
-            // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            return dtDateTime.AddMilliseconds(unixtime).ToLocalTime();
+        private bool GetDefaults(string options)
+        {
+            try
+            {
+                _dateTimePickerOptions = new DateTimePickerOptions();
+                var args = JSON.JsonHelper.Deserialize<string[]>(options);
+                var value = args[0];
+                var step = args.Length > 2 ? args[1] : null;
+
+                if (!String.IsNullOrEmpty(value))
+                {
+                    _dateTimePickerOptions.Value = FromUnixTime(long.Parse(value));
+                }
+                if (!String.IsNullOrEmpty(step))
+                {
+                     _dateTimePickerOptions.Step = int.Parse(step);
+                }
+            }
+            catch (Exception ex)
+            {
+                DispatchCommandResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, ex.Message));
+                return false;
+            }
+            return true;
         }
 
+        private static DateTime FromUnixTime(long unixtime)
+        {
+            var dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            return dateTime.AddMilliseconds(unixtime).ToLocalTime();
+        }
 
-        /// <summary>
-        /// Handles datetime picker result
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e">stores information about current captured image</param>
         private void dateTimePickerTask_Completed(object sender, DateTimePickerTask.DateTimeResult e)
         {
             if (e.Error != null)
@@ -166,7 +114,7 @@ namespace WPCordovaClassLib.Cordova.Commands
                 case TaskResult.OK:
                     try
                     {
-                        long result = (long) e.Value.Value.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+                        var result = (long) e.Value.Value.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
                         DispatchCommandResult(new PluginResult(PluginResult.Status.OK, result + ""));
                     }
                     catch (Exception ex)
@@ -176,11 +124,11 @@ namespace WPCordovaClassLib.Cordova.Commands
                     break;
 
                 case TaskResult.Cancel:
-                    DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Canceled."));
+                    DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Cancelled."));
                     break;               
             }
 
-            this.dateTimePickerTask = null;
+            _dateTimePickerTask = null;
         }       
 
     }
