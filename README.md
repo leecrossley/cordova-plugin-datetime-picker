@@ -18,6 +18,18 @@ You **do not** need to reference any JavaScript, the Cordova plugin architecture
 
 Ensure you use the plugin after your deviceready event has been fired.
 
+### Example
+
+```js
+var onDateSelected = function (date) {
+    console.log(new Date(parseInt(date, 10)));
+}
+
+datetimepicker.selectDate(onDateSelected);
+```
+
+Once the date is selected, the callback function `onDateSelected` will log the selected date (as a JavaScript Date object) to the console.
+
 ## Platforms
 
 Windows Phone 8 support only.
