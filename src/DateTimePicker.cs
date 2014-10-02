@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Runtime.Serialization;
 using Microsoft.Phone.Tasks;
+using WPCordovaClassLib.Cordova.JSON;
 
 namespace WPCordovaClassLib.Cordova.Commands
 {
@@ -8,6 +9,7 @@ namespace WPCordovaClassLib.Cordova.Commands
     {
         private DateTimePickerTask _dateTimePickerTask;
         private DateTimePickerOptions _dateTimePickerOptions;
+        private string _callbackId;
 
         [DataContract]
         public class DateTimePickerOptions
@@ -33,7 +35,7 @@ namespace WPCordovaClassLib.Cordova.Commands
 
         public void selectDate(string options)
         {
-            try 
+            try
             {
                 if (!GetDefaults(options)) return;
 
@@ -44,7 +46,7 @@ namespace WPCordovaClassLib.Cordova.Commands
             }
             catch (Exception e)
             {
-                DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, e.Message));
+                DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, e.Message), _callbackId);
             }
         }
 
@@ -65,7 +67,7 @@ namespace WPCordovaClassLib.Cordova.Commands
             }
             catch (Exception e)
             {
-                DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, e.Message));
+                DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, e.Message), _callbackId);
             }
         }
 
@@ -74,9 +76,10 @@ namespace WPCordovaClassLib.Cordova.Commands
             try
             {
                 _dateTimePickerOptions = new DateTimePickerOptions();
-                var args = JSON.JsonHelper.Deserialize<string[]>(options);
+                var args = JsonHelper.Deserialize<string[]>(options);
                 var value = args[0];
                 var step = args.Length > 2 ? args[1] : null;
+                _callbackId = args[args.Length - 1];
 
                 if (!String.IsNullOrEmpty(value))
                 {
@@ -89,7 +92,7 @@ namespace WPCordovaClassLib.Cordova.Commands
             }
             catch (Exception ex)
             {
-                DispatchCommandResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, ex.Message));
+                DispatchCommandResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, ex.Message), _callbackId);
                 return false;
             }
             return true;
@@ -105,9 +108,9 @@ namespace WPCordovaClassLib.Cordova.Commands
         {
             if (e.Error != null)
             {
-                DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR));
+                DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR), _callbackId);
                 return;
-            }            
+            }
 
             switch (e.TaskResult)
             {
@@ -115,21 +118,21 @@ namespace WPCordovaClassLib.Cordova.Commands
                     try
                     {
                         var result = (long) e.Value.Value.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-                        DispatchCommandResult(new PluginResult(PluginResult.Status.OK, result + ""));
+                        DispatchCommandResult(new PluginResult(PluginResult.Status.OK, result + ""), _callbackId);
                     }
                     catch (Exception ex)
                     {
-                        DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Datetime picker error. " + ex.Message));
+                        DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Datetime picker error. " + ex.Message), _callbackId);
                     }
                     break;
 
                 case TaskResult.Cancel:
-                    DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Cancelled."));
-                    break;               
+                    DispatchCommandResult(new PluginResult(PluginResult.Status.ERROR, "Cancelled."), _callbackId);
+                    break;
             }
 
             _dateTimePickerTask = null;
-        }       
+        }
 
     }
 }
