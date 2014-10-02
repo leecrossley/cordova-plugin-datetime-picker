@@ -35,12 +35,6 @@ namespace Cordova.Extension.Commands
             }
         }
 
-        public void DispatchProgressCommandResult()
-        {
-            var pluginResult = new PluginResult(PluginResult.Status.NO_RESULT) { KeepCallback = true };
-            DispatchCommandResult(pluginResult, _callbackId);
-        }
-
         public void selectDate(string options)
         {
             try
@@ -50,8 +44,6 @@ namespace Cordova.Extension.Commands
 
                 _dateTimePickerTask.Completed += dateTimePickerTask_Completed;
                 _dateTimePickerTask.Show(DateTimePickerTask.DateTimePickerType.Date);
-
-                DispatchProgressCommandResult();
             }
             catch (Exception e)
             {
@@ -73,8 +65,6 @@ namespace Cordova.Extension.Commands
 
                 _dateTimePickerTask.Completed += dateTimePickerTask_Completed;
                 _dateTimePickerTask.Show(DateTimePickerTask.DateTimePickerType.Time);
-
-                DispatchProgressCommandResult();
             }
             catch (Exception e)
             {
@@ -144,6 +134,5 @@ namespace Cordova.Extension.Commands
 
             _dateTimePickerTask = null;
         }
-
     }
 }
