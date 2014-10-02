@@ -1,9 +1,11 @@
 using System;
 using System.Runtime.Serialization;
 using Microsoft.Phone.Tasks;
+using WPCordovaClassLib.Cordova;
+using WPCordovaClassLib.Cordova.Commands;
 using WPCordovaClassLib.Cordova.JSON;
 
-namespace WPCordovaClassLib.Cordova.Commands
+namespace Cordova.Extension.Commands
 {
     public class DateTimePicker : BaseCommand
     {
@@ -33,16 +35,23 @@ namespace WPCordovaClassLib.Cordova.Commands
             }
         }
 
+        public void DispatchProgressCommandResult()
+        {
+            var pluginResult = new PluginResult(PluginResult.Status.NO_RESULT) { KeepCallback = true };
+            DispatchCommandResult(pluginResult, _callbackId);
+        }
+
         public void selectDate(string options)
         {
             try
             {
                 if (!GetDefaults(options)) return;
-
                 _dateTimePickerTask = new DateTimePickerTask { Value = _dateTimePickerOptions.Value };
 
                 _dateTimePickerTask.Completed += dateTimePickerTask_Completed;
                 _dateTimePickerTask.Show(DateTimePickerTask.DateTimePickerType.Date);
+
+                DispatchProgressCommandResult();
             }
             catch (Exception e)
             {
@@ -64,6 +73,8 @@ namespace WPCordovaClassLib.Cordova.Commands
 
                 _dateTimePickerTask.Completed += dateTimePickerTask_Completed;
                 _dateTimePickerTask.Show(DateTimePickerTask.DateTimePickerType.Time);
+
+                DispatchProgressCommandResult();
             }
             catch (Exception e)
             {
@@ -118,7 +129,7 @@ namespace WPCordovaClassLib.Cordova.Commands
                     try
                     {
                         var result = (long) e.Value.Value.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-                        DispatchCommandResult(new PluginResult(PluginResult.Status.OK, result + ""), _callbackId);
+                        DispatchCommandResult(new PluginResult(PluginResult.Status.OK, result.ToString()), _callbackId);
                     }
                     catch (Exception ex)
                     {

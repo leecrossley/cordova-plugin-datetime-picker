@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Tasks;
@@ -6,7 +6,7 @@ using Coding4Fun.Toolkit.Controls.Primitives;
 using Microsoft.Phone.Controls.Primitives;
 using System.Windows.Navigation;
 
-namespace WPCordovaClassLib.Cordova.Commands
+namespace Cordova.Extension.Commands
 {
     public class DateTimePickerTask
     {
@@ -117,7 +117,7 @@ namespace WPCordovaClassLib.Cordova.Commands
             {
                 if (_timeSpanPickerPage.Value.HasValue)
                 {
-                    Value = new DateTime() + _timeSpanPickerPage.Value.Value;;
+                    Value = new DateTime() + _timeSpanPickerPage.Value.Value;
                     taskResult = new DateTimeResult(TaskResult.OK) { Value = Value.Value };
                 }
             }
@@ -177,6 +177,6 @@ namespace WPCordovaClassLib.Cordova.Commands
         {
             ClosePickerPage();
         }
-        
+
     }
 }
