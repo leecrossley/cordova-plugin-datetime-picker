@@ -2,8 +2,6 @@
 
 **for Apache Cordova (Windows Phone 8)**
 
-**There is an issue with this plugin and the latest version of Cordova, please see [issue #2](https://github.com/leecrossley/cordova-plugin-datetime-picker/issues/2)**
-
 ## Install
 
 ```
