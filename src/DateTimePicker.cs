@@ -12,6 +12,7 @@ namespace Cordova.Extension.Commands
         private DateTimePickerTask _dateTimePickerTask;
         private DateTimePickerOptions _dateTimePickerOptions;
         private string _callbackId;
+        public event EventHandler<PluginResult> mySavedHandler;
 
         [DataContract]
         public class DateTimePickerOptions
@@ -39,6 +40,11 @@ namespace Cordova.Extension.Commands
         {
             try
             {
+                if (ResultHandlers.ContainsKey(CurrentCommandCallbackId))
+                {
+                    mySavedHandler = ResultHandlers[CurrentCommandCallbackId];
+                }
+                
                 if (!GetDefaults(options)) return;
                 _dateTimePickerTask = new DateTimePickerTask { Value = _dateTimePickerOptions.Value };
 
@@ -55,6 +61,11 @@ namespace Cordova.Extension.Commands
         {
             try
             {
+                if (ResultHandlers.ContainsKey(CurrentCommandCallbackId))
+                {
+                    mySavedHandler = ResultHandlers[CurrentCommandCallbackId];
+                }
+                
                 if (!GetDefaults(options)) return;
 
                 _dateTimePickerTask = new DateTimePickerTask
@@ -119,6 +130,11 @@ namespace Cordova.Extension.Commands
                     try
                     {
                         var result = (long) e.Value.Value.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+                        
+                        if (!ResultHandlers.ContainsKey(CurrentCommandCallbackId))
+                        {
+                            ResultHandlers.Add(CurrentCommandCallbackId, mySavedHandler);
+                        }
                         DispatchCommandResult(new PluginResult(PluginResult.Status.OK, result.ToString()), _callbackId);
                     }
                     catch (Exception ex)
