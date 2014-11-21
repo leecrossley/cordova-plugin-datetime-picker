@@ -32,6 +32,10 @@ datetimepicker.selectDate(onDateSelected);
 
 Once the date is selected, the callback function `onDateSelected` will log the selected date (as a JavaScript Date object) to the console.
 
+### Screenshot
+
+![Screenshot](https://raw.githubusercontent.com/leecrossley/cordova-plugin-datetime-picker/master/screenshot.jpg)
+
 ## Platforms
 
 Windows Phone 8 support only.
