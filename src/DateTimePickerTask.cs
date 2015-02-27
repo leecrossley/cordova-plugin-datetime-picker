@@ -117,7 +117,7 @@ namespace Cordova.Extension.Commands
             {
                 if (_timeSpanPickerPage.Value.HasValue)
                 {
-                    Value = new DateTime() + _timeSpanPickerPage.Value.Value;
+                    Value = new DateTime(1970, 1, 1, 0, 0, 0, 0) + _timeSpanPickerPage.Value.Value;
                     taskResult = new DateTimeResult(TaskResult.OK) { Value = Value.Value };
                 }
             }
