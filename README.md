@@ -28,6 +28,13 @@ var onDateSelected = function (date) {
 datetimepicker.selectDate(onDateSelected);
 ```
 
+var onTimeSelected = function (time) {
+    console.log(new Date(parseInt(time, 10)));
+}
+
+datetimepicker.selectTime(onTimeSelected);
+```
+
 Once the date is selected, the callback function `onDateSelected` will log the selected date (as a JavaScript Date object) to the console.
 
 ### Screenshot
