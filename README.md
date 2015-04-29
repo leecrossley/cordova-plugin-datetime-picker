@@ -4,6 +4,14 @@
 
 ## Install
 
+#### Latest published version on npm (with Cordova CLI >= 5.0.0)
+
+```
+cordova plugin add cordova-plugin-datetime-picker
+```
+
+#### Latest version from GitHub
+
 ```
 cordova plugin add https://github.com/leecrossley/cordova-plugin-datetime-picker.git
 ```

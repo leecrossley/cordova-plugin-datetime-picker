@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-datetime-picker",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "author": "Lee Crossley <leee@hotmail.co.uk> (http://ilee.co.uk/)",
   "description": "Cordova Date Time Picker Plugin to utilise the native Windows Phone 8 toolkit date and time selectors.",
   "cordova": {
@@ -30,7 +30,6 @@
       "version": ">=3.0.0"
     }
   ],
-  "author": "",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/leecrossley/cordova-plugin-datetime-picker/issues"
